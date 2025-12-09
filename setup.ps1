@@ -1,7 +1,7 @@
 Clear-Host
 # GitHub Script Runner - Token Setup
 # Author: Filip Fronczak
-# Version: 1.1.1
+# Version: 1.1.2
 # Date: 2024-12-08
 # Public setup script for configuring GitHub token authentication
 # Repository: https://github.com/Wolfsberg/ScriptRunner
@@ -116,11 +116,16 @@ try {
             New-Item -ItemType Directory -Path $scriptsPath -Force | Out-Null
         }
         
-        # Download run.ps1 from ScriptRunner repository
-        $runScriptUrl = "https://raw.githubusercontent.com/Wolfsberg/ScriptRunner/main/run.ps1"
-        $runScriptPath = Join-Path $scriptsPath "run.ps1"
+        # Download run.ps1 from ScriptRunner repository using GitHub API (works for private repos)
+        $apiUrl = "https://api.github.com/repos/Wolfsberg/ScriptRunner/contents/run.ps1?ref=main"
+        $response = Invoke-RestMethod -Uri $apiUrl -Headers $headers -Method Get -ErrorAction Stop
         
-        Invoke-WebRequest -Uri $runScriptUrl -OutFile $runScriptPath -ErrorAction Stop
+        # Decode base64 content
+        $runScriptContent = [System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String($response.content))
+        
+        # Save to file
+        $runScriptPath = Join-Path $scriptsPath "run.ps1"
+        $runScriptContent | Out-File -FilePath $runScriptPath -Encoding UTF8 -Force
         
         Write-Host " OK" -ForegroundColor Green
         Write-Host "Saved to: $runScriptPath" -ForegroundColor Gray
