@@ -1,7 +1,7 @@
 Clear-Host
 # GitHub Script Runner - Token Setup
 # Author: Filip Fronczak
-# Version: 1.0.1
+# Version: 1.1.1
 # Date: 2024-12-08
 # Public setup script for configuring GitHub token authentication
 # Repository: https://github.com/Wolfsberg/ScriptRunner
@@ -106,14 +106,48 @@ try {
     Write-Host "Setup complete!" -ForegroundColor Green
     Write-Host ("=" * 80) -ForegroundColor Green
     
-    # Check if run.ps1 exists locally
-    if (Test-Path ".\run.ps1") {
-        Write-Host "`nYou can now run scripts with: .\run.ps1`n" -ForegroundColor Cyan
-    }
-    else {
+    # Download run.ps1 after successful setup
+    Write-Host "`nDownloading run.ps1..." -NoNewline
+    
+    try {
+        # Create scripts directory if it doesn't exist
+        $scriptsPath = Join-Path $env:USERPROFILE "Documents\_anythin-scripts"
+        if (-not (Test-Path $scriptsPath)) {
+            New-Item -ItemType Directory -Path $scriptsPath -Force | Out-Null
+        }
+        
+        # Download run.ps1 from ScriptRunner repository
+        $runScriptUrl = "https://raw.githubusercontent.com/Wolfsberg/ScriptRunner/main/run.ps1"
+        $runScriptPath = Join-Path $scriptsPath "run.ps1"
+        
+        Invoke-WebRequest -Uri $runScriptUrl -OutFile $runScriptPath -ErrorAction Stop
+        
+        Write-Host " OK" -ForegroundColor Green
+        Write-Host "Saved to: $runScriptPath" -ForegroundColor Gray
+        
         Write-Host "`nNext steps:" -ForegroundColor Cyan
-        Write-Host "  1. Download run.ps1 from ScriptRunner repository" -ForegroundColor Gray
-        Write-Host "  2. Run: .\run.ps1`n" -ForegroundColor Gray
+        Write-Host "  1. Open PowerShell" -ForegroundColor Gray
+        Write-Host "  2. Navigate: cd `"$scriptsPath`"" -ForegroundColor Gray
+        Write-Host "  3. Run: .\run.ps1`n" -ForegroundColor Gray
+        
+        # Ask if user wants to run now
+        Write-Host "Would you like to run the script now? (Y/N): " -NoNewline -ForegroundColor Yellow
+        $runNow = Read-Host
+        
+        if ($runNow -eq "Y" -or $runNow -eq "y") {
+            Write-Host "`nStarting script runner...`n" -ForegroundColor Cyan
+            Set-Location $scriptsPath
+            & "$runScriptPath"
+        }
+        else {
+            Write-Host "`nSetup complete. Run scripts anytime with:`n  cd `"$scriptsPath`"`n  .\run.ps1`n" -ForegroundColor Gray
+        }
+    }
+    catch {
+        Write-Host " WARNING" -ForegroundColor Yellow
+        Write-Host "`nCould not download run.ps1: $($_.Exception.Message)" -ForegroundColor Yellow
+        Write-Host "You can manually download it from:" -ForegroundColor Yellow
+        Write-Host "  https://github.com/Wolfsberg/ScriptRunner/blob/main/run.ps1`n" -ForegroundColor Gray
     }
 }
 catch {
