@@ -1,7 +1,7 @@
 Clear-Host
 # GitHub Script Runner - Token Setup
 # Author: Filip Fronczak
-# Version: 1.1.2
+# Version: 1.1.3
 # Date: 2024-12-08
 # Public setup script for configuring GitHub token authentication
 # Repository: https://github.com/Wolfsberg/ScriptRunner
@@ -116,8 +116,12 @@ try {
             New-Item -ItemType Directory -Path $scriptsPath -Force | Out-Null
         }
         
+        # Get default branch from repository (might be main or master)
+        $repoInfo = Invoke-RestMethod -Uri "https://api.github.com/repos/Wolfsberg/ScriptRunner" -Headers $headers -Method Get -ErrorAction Stop
+        $defaultBranch = $repoInfo.default_branch
+        
         # Download run.ps1 from ScriptRunner repository using GitHub API (works for private repos)
-        $apiUrl = "https://api.github.com/repos/Wolfsberg/ScriptRunner/contents/run.ps1?ref=main"
+        $apiUrl = "https://api.github.com/repos/Wolfsberg/ScriptRunner/contents/run.ps1?ref=$defaultBranch"
         $response = Invoke-RestMethod -Uri $apiUrl -Headers $headers -Method Get -ErrorAction Stop
         
         # Decode base64 content
@@ -150,9 +154,22 @@ try {
     }
     catch {
         Write-Host " WARNING" -ForegroundColor Yellow
-        Write-Host "`nCould not download run.ps1: $($_.Exception.Message)" -ForegroundColor Yellow
-        Write-Host "You can manually download it from:" -ForegroundColor Yellow
-        Write-Host "  https://github.com/Wolfsberg/ScriptRunner/blob/main/run.ps1`n" -ForegroundColor Gray
+        Write-Host "`nCould not download run.ps1" -ForegroundColor Yellow
+        Write-Host "Error: $($_.Exception.Message)" -ForegroundColor Gray
+        
+        if ($_.Exception.Message -like "*404*") {
+            Write-Host "`nPossible causes:" -ForegroundColor Yellow
+            Write-Host "  - run.ps1 doesn't exist in ScriptRunner repository root" -ForegroundColor Gray
+            Write-Host "  - File is in a different location" -ForegroundColor Gray
+            if ($defaultBranch) {
+                Write-Host "`nPlease ensure run.ps1 exists at:" -ForegroundColor Yellow
+                Write-Host "  https://github.com/Wolfsberg/ScriptRunner/blob/$defaultBranch/run.ps1" -ForegroundColor Gray
+            }
+        }
+        
+        Write-Host "`nYou can manually download it from:" -ForegroundColor Yellow
+        Write-Host "  https://github.com/Wolfsberg/ScriptRunner" -ForegroundColor Gray
+        Write-Host "  Save to: $scriptsPath\run.ps1`n" -ForegroundColor Gray
     }
 }
 catch {
