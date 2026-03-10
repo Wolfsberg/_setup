@@ -705,6 +705,7 @@ function Main {
             "citrix-workspace",
             "git.install",
             "googledrive",
+            "NETworkManager",
             "netrouteview",
             "notepadplusplus.install",
             "onedrive",
