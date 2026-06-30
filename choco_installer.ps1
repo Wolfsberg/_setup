@@ -13,10 +13,10 @@ Packages are organized by categories: Browsers, Office Apps, Admin Apps and Util
 Compatible with Chocolatey v2.6.0+.
 
 .VERSION
-3.2.1
+3.3.0
 
 .DATE
-2024-12-17
+2026-06-30
 
 .AUTHOR
 Filip Fronczak
@@ -403,15 +403,14 @@ function Install-ChocoPackages {
     Write-Host ""
     
     try {
-        # Execute choco with all packages at once
-        $output = & choco $arguments 2>&1 | Out-String
-        
-        # Display output without excessive progress lines
-        $filteredOutput = $output -split "`n" | Where-Object { 
-            $_ -notmatch "^Progress: Downloading" 
+        # Execute choco and stream its output to the console line by line as it
+        # is produced, while accumulating the full text into $output so the
+        # per-package result parsing below still has the complete log to work with
+        $output = & choco $arguments 2>&1 | ForEach-Object {
+            $line = $_.ToString()
+            Write-Host $line
+            $line
         } | Out-String
-        
-        Write-Host $filteredOutput
         
         # Parse output for each package
         foreach ($package in $Packages) {
@@ -504,9 +503,14 @@ function Uninstall-ChocoPackages {
     Write-Host ""
     
     try {
-        # Execute choco uninstall with all packages at once
-        $output = & choco $arguments 2>&1 | Out-String
-        Write-Host $output
+        # Execute choco and stream its output to the console line by line as it
+        # is produced, while accumulating the full text into $output so the
+        # per-package result parsing below still has the complete log to work with
+        $output = & choco $arguments 2>&1 | ForEach-Object {
+            $line = $_.ToString()
+            Write-Host $line
+            $line
+        } | Out-String
         
         # Parse output for each package
         foreach ($package in $Packages) {
@@ -569,15 +573,14 @@ function Update-ChocoPackages {
     Write-Host ""
     
     try {
-        # Execute choco upgrade with all packages at once
-        $output = & choco $arguments 2>&1 | Out-String
-        
-        # Display output without excessive progress lines
-        $filteredOutput = $output -split "`n" | Where-Object { 
-            $_ -notmatch "^Progress: Downloading" 
+        # Execute choco and stream its output to the console line by line as it
+        # is produced, while accumulating the full text into $output so the
+        # per-package result parsing below still has the complete log to work with
+        $output = & choco $arguments 2>&1 | ForEach-Object {
+            $line = $_.ToString()
+            Write-Host $line
+            $line
         } | Out-String
-        
-        Write-Host $filteredOutput
         
         # Parse output for each package
         foreach ($package in $Packages) {
