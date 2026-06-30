@@ -693,32 +693,32 @@ function Main {
     # Define package list organized by categories
     $packageList = @{
         "Browsers" = @(
-            "brave",
+            "Brave",
             "GoogleChrome",
-            "microsoft-edge"
+            "Microsoft-Edge"
         )
         "Office Apps" = @(
-            "adobereader",
-            "office365business",
-            "onlyoffice",
+            "AdobeReader",
+            "Office365business",
+            "Onlyoffice",
             "PowerBI"
         )
         "Admin Apps and Utils" = @(
             "7zip.install",
-            "citrix-workspace-ltsr",
+            "Citrix-Workspace-LTSR",
             "git.install",
-            "googledrive",
+            "GoogleDrive",
             "NETworkManager",
-            "netrouteview",
-            "notepadplusplus.install",
-            "onedrive",
-            "putty.install",
-            "sql-server-management-studio",
-            "sysinternals",
-            "totalcommander",
-            "visualstudiocode",
+            "NetRouteView",
+            "NotepadPlusPlus.install",
+            "OneDrive",
+            "Putty.install",
+            "SQL-Server-Management-Studio",
+            "SysInternals",
+            "TotalCommander",
+            "VisualStudioCode",
             "vscode.install",
-            "winscp.install",
+            "WinSCP.install",
             "WireShark"
         )
         "Runtimes" = @(
