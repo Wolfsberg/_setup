@@ -705,7 +705,7 @@ function Main {
         )
         "Admin Apps and Utils" = @(
             "7zip.install",
-            "citrix-workspace",
+            "citrix-workspace-ltsr",
             "git.install",
             "googledrive",
             "NETworkManager",
