@@ -700,7 +700,7 @@ function Main {
         "Office Apps" = @(
             "AdobeReader",
             "Office365business",
-            "Onlyoffice",
+            "OnlyOffice",
             "PowerBI"
         )
         "Admin Apps and Utils" = @(
